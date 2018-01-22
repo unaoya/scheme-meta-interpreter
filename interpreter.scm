@@ -47,32 +47,25 @@
 	       (vals (map (lambda (x) (exec (cadr x) env)) (cadr exp))))
 	   (let ((env (new-env names vals env)))
 	     (exec (caddr exp) env))))
-;	((begin)
-;	 (begin
-;	   (adr exp)
+	((begin)
+	 (let ((env new-env))
+	   (exec (cddr exp) env)))
 	(else
 	 (apply (exec (car exp) env)
 		(map (lambda (x) (exec x env))
 		     (cdr exp))))))
      (else exp))))
 
+
+
+(interpret `(begin
+	      (list 1 2)
+	      (list 3 4)))
+(cddr (list 1 2 3 4))
 (begin
-  (define x 10)
-  x)
-
-(interpret `(let ((i 'a))
-	      (cons i i)))
-(interpret `(cons 'a 'a))
-(interpret `(let ((i 'a) (j 'b))
-	      (cons i j)))
-(interpret `(let ((i 1))
-	      (let ((j (cons i 'b)))
-		(list i j))))
-
-(define exp '((i 'a) (j 'b)))
-(new-env (map car exp) (map cadr exp) '())
-(map cdr (new-env (map car exp) (map cadr exp) '()))
-
+  (list 1 2)
+  (list 3 4))
+	     
 
 (define interpret
   (lambda (exp)
@@ -103,4 +96,18 @@
 		 (reverse (cdr ls) (cons (car ls) new)))))
    (reverse '(a b c d e) '()))
    #f))
+
+(interpret `(let ((i 'a))
+	      (cons i i)))
+(interpret `(cons 'a 'a))
+(interpret `(let ((i 'a) (j 'b))
+	      (cons i j)))
+(interpret `(let ((i 1))
+	      (let ((j (cons i 'b)))
+		(list i j))))
+
+(define exp '((i 'a) (j 'b)))
+(new-env (map car exp) (map cadr exp) '())
+(map cdr (new-env (map car exp) (map cadr exp) '()))
+
 
